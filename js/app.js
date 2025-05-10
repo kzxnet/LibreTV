@@ -1,5 +1,5 @@
 // 全局变量
-let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["tyyszy", "bfzy", "ruyi"]'); // 默认选中天涯资源、暴风资源和如意资源
+let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["tyyszy","dyttzy", "bfzy", "ruyi"]'); // 默认选中天涯资源、暴风资源和如意资源
 let customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
 
 // 添加当前播放的集数索引
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
         // 仅选择天涯资源、暴风资源和如意资源
-        selectedAPIs = ["tyyszy", "bfzy", "ruyi"];
+        selectedAPIs = ["tyyszy", "bfzy","dyttzy", "ruyi"];
         localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
         
         // 默认选中过滤开关
@@ -889,7 +889,10 @@ async function showDetails(id, vod_name, sourceCode) {
             episodesReversed = false; // 默认正序
             modalContent.innerHTML = `
                 <div class="flex justify-end mb-2">
-                    <button onclick="toggleEpisodeOrder('${sourceCode}')" class="px-4 py-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform flex items-center justify-center space-x-2">
+                    <button onclick="copyLinks()" class="px-4 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-300 transform items-center justify-center flex">
+                        <span>复制视频链接</span>
+                    </button>
+                    <button onclick="toggleEpisodeOrder('${sourceCode}')" class="ml-2 px-4 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white text-xs font-semibold rounded-lg transition-all duration-300 transform items-center justify-center flex">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
                         </svg>
@@ -1010,6 +1013,17 @@ function renderEpisodes(vodName, sourceCode) {
             </button>
         `;
     }).join('');
+}
+
+// 复制视频链接到剪贴板
+function copyLinks() {
+    const episodes = episodesReversed ? [...currentEpisodes].reverse() : currentEpisodes;
+    const linkList = episodes.join('\r\n');
+    navigator.clipboard.writeText(linkList).then(() => {
+        showToast('视频链接列表已复制到剪贴板', 'success');
+    }).catch(err => {
+        showToast('复制失败，请检查浏览器权限', 'error');
+    });
 }
 
 // 切换排序状态的函数
